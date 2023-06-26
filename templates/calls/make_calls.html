@@ -1,0 +1,31 @@
+<!-- make_calls.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Make Calls</h2>
+<form id="make-calls-form" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Make Calls">
+</form>
+<div id="status"></div>
+<script>
+    document.querySelector('#make-calls-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.querySelector('#status').textContent = 'Making calls...';
+        fetch('/make_calls/', {
+            method: 'POST',
+            body: new FormData(event.target),
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(function(response) {
+            if (response.ok) {
+                document.querySelector('#status').textContent = 'Calls made successfully.';
+                window.location.href = '/make_calls_done/';
+            } else {
+                document.querySelector('#status').textContent = 'An error occurred while making calls.';
+            }
+        });
+    });
+</script>
+{% endblock %}

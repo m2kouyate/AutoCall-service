@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Save Subscriber List</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ subscriber_upload_form.as_p }}
+    <input type="submit" value="Save">
+</form>
+{% endblock %}

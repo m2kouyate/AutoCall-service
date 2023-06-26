@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if form.errors %}
+    <p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+{% if user.is_authenticated %}
+    <h2>Settings</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ provider_form.as_p }}
+        {{ audio_file_form.as_p }}
+        {{ subscriber_upload_form.as_p }}
+        <input type="submit" value="Save">
+    </form>
+{% else %}
+    <p>Please login to see this page.</p>
+{% endif %}
+
+{% endblock %}
