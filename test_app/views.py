@@ -131,18 +131,16 @@ def save_subscriber_list(request: HttpRequest) -> HttpResponse:
                 try:
                     tele_provider = TelephonyProvider.objects.filter(user=request.user).last()
                     audio_file = AudioFile.objects.filter(user=request.user).last()
-                    print(f'Last created AudioFile instance for current user: {audio_file}')
                     user_settings, created = UserSettings.objects.get_or_create(
                         user=request.user,
                         audio_file=audio_file,
                         tele_provider=tele_provider
                     )
-                    print(f'UserSettings instance created: {user_settings}')
                     user_settings.tele_provider = tele_provider
                     user_settings.audio_file = audio_file
                     user_settings.save()
                 except Exception as e:
-                    print(f'Error creating UserSettings instance: {e}')
+                    pass
             except Exception as e:
                 messages.error(request, f'Error uploading subscriber list: {e}')
             return redirect('make_calls')
@@ -152,26 +150,21 @@ def save_subscriber_list(request: HttpRequest) -> HttpResponse:
 
 
 def make_calls(request):
-    print('make_calls called')
     if request.method == 'POST':
-        print('POST request')
         try:
             user_settings = UserSettings.objects.get(user=request.user)
             provider = user_settings.tele_provider
             audio_file = user_settings.audio_file
             subscriber_phone_numbers = Subscriber.objects.values_list('phone_number', flat=True)
             for subscriber_phone_number in subscriber_phone_numbers:
-                print(f'{subscriber_phone_number} called')
                 make_call(subscriber_phone_number, audio_file.file.path, provider)
             messages.success(request, 'Calls made successfully.')
         except UserSettings.DoesNotExist:
-            print('UserSettings.DoesNotExist')
             messages.error(request, 'You must configure your settings before making calls.')
         except Exception as e:
-            print(f'Exception: {e}')
+            pass
         return redirect('make_calls_done')
     else:
-        print('Not a POST request')
         return render(request, 'calls/make_calls.html')
 
 
@@ -201,11 +194,6 @@ def make_call(subscriber_phone_number, audio_file_path, provider):
         if not provider:
             logger.warning(f'Provider is not set for call to {subscriber_phone_number}')
             raise Exception('Provider is not set')
-
-        # Log SIP connection parameters
-        print(f'SIP gateway address: {provider.sip_gateway_address}')
-        print(f'Username: {provider.username}')
-        print(f'Password: {provider.password}')
 
         phone = VoIPPhone(
             provider.sip_gateway_address, 5060, provider.username, provider.password, myIP=get_local_ip()
