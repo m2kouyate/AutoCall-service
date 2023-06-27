@@ -10,5 +10,4 @@ drf_yasg==1.21.6
 pydub==0.25.1
 python-dotenv==1.0.0
 pyVoIP==1.6.4
-pyVoIP==1.6.4
 Requests==2.31.0
