@@ -10,10 +10,11 @@ class TokenMiddleware(MiddlewareMixin):
     """
     def process_request(self, request: HttpRequest) -> None or JsonResponse:
         if request.path in [
-            '/', '/accounts/login/', '/accounts/logout/', '/register/', '/admin/',
-            '/admin/logout/', '/admin/login/?next=/admin/'
+            '/', '/accounts/login/', '/accounts/logout/', '/register/'
         ]:
             return None
+         if request.path.startswith('/admin/'): 
+            return None  
         if 'HTTP_AUTHORIZATION' not in request.META:
             return JsonResponse({'error': 'Token is required.'}, status=401)
         token = request.META.get('HTTP_AUTHORIZATION').split()[1]
