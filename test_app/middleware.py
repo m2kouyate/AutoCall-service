@@ -13,7 +13,7 @@ class TokenMiddleware(MiddlewareMixin):
             '/', '/accounts/login/', '/accounts/logout/', '/register/'
         ]:
             return None
-         if request.path.startswith('/admin/'): 
+        if request.path.startswith('/admin/'):
             return None  
         if 'HTTP_AUTHORIZATION' not in request.META:
             return JsonResponse({'error': 'Token is required.'}, status=401)
