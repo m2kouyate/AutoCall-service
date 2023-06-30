@@ -10,7 +10,8 @@ class TokenMiddleware(MiddlewareMixin):
     """
     def process_request(self, request: HttpRequest) -> None or JsonResponse:
         if request.path in [
-            '/', '/accounts/login/', '/accounts/logout/', '/register/',
+            '/', '/accounts/login/', '/accounts/logout/', '/register/', '/admin/',
+            '/admin/logout/', '/admin/login/?next=/admin/'
         ]:
             return None
         if 'HTTP_AUTHORIZATION' not in request.META:
